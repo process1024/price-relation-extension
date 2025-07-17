@@ -1,33 +1,44 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# 以图搜同款浏览器扩展
 
-## Getting Started
+一个强大的图片搜索浏览器扩展，帮助您快速找到同款商品和相似图片。
 
-First, run the development server:
+## 核心功能
+
+### 🔍 以图搜同款
+
+- **悬停触发**: 在任何网站上悬停图片时自动显示搜索按钮
+- **一键搜索**: 点击按钮即可跳转到专业的以图搜图网站
+- **全网支持**: 支持所有网站的图片搜索功能
+- **智能识别**: 自动识别页面中的商品图片
+
+### 🎯 使用场景
+
+- 电商网站找同款商品比价
+- 社交媒体图片来源查找
+- 设计素材相似图片搜索
+- 商品货源查找
+
+## 技术特性
+
+- 🚀 基于 Plasmo 框架开发
+- ⚡ 轻量级，不影响页面性能
+- 🎨 现代化UI设计
+- 🔒 隐私保护，不存储用户数据
+
+## 开发
+
+使用 pnpm 进行开发：
 
 ```bash
+# 安装依赖
+pnpm install
+
+# 开发模式
 pnpm dev
-# or
-npm run dev
-```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
-
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
-
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
-
-## Making production build
-
-Run the following:
-
-```bash
+# 构建生产版本
 pnpm build
-# or
-npm run build
+
+# 打包扩展
+pnpm package
 ```
-
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
-
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!

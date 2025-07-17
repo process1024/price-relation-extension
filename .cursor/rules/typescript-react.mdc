@@ -1,0 +1,28 @@
+---
+globs: *.ts,*.tsx
+description: TypeScript 和 React 编码规范
+---
+
+# TypeScript & React 编码规范
+
+## TypeScript 指南
+- 始终为函数参数和返回类型使用显式类型注解
+- 对于对象形状优先使用 `interface` 而不是 `type`，除非需要联合类型
+- 使用 [tsconfig.json](mdc:tsconfig.json) 中配置的严格 TypeScript 设置
+- 使用浏览器 API 时从 `@types/chrome` 导入 Chrome 扩展类型
+
+## React 指南
+- 使用带有 hooks 的函数组件 (React 18.2.0)
+- 优先使用命名导出而不是默认导出，以获得更好的树摇优化
+- 使用合适的 JSX 语法，在适当的地方使用自闭合标签
+- 遵循 React hooks 规则和依赖项
+
+## 代码格式化
+- 此项目使用 Prettier 自定义配置 ([.prettierrc.mjs](mdc:.prettierrc.mjs))
+- 导入排序由 `@ianvs/prettier-plugin-sort-imports` 处理
+- 提交代码前始终运行 prettier
+
+## 浏览器扩展特定规范
+- 使用 Chrome API 时，始终检查 `chrome` 对象的可用性
+- 使用 try-catch 块正确处理异步操作
+- 考虑内联脚本的内容安全策略限制

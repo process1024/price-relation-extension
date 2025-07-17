@@ -1,0 +1,31 @@
+---
+alwaysApply: true
+description: Plasmo浏览器扩展项目结构和框架指南
+---
+
+# Plasmo 浏览器扩展项目
+
+这是一个使用 Plasmo 框架构建的以图搜同款浏览器扩展。项目关键信息：
+
+## 项目结构
+
+- 主要入口点：[content.tsx](mdc:src/content.tsx) 用于内容脚本，[popup.tsx](mdc:src/popup.tsx) 用于弹窗UI
+- 包管理：使用 pnpm (参见 [pnpm-lock.yaml](mdc:pnpm-lock.yaml))
+- 配置文件：[package.json](mdc:package.json) 包含 Plasmo 特定的 manifest 配置
+- TypeScript 配置：[tsconfig.json](mdc:tsconfig.json) 用于类型检查
+
+## Plasmo 框架指南
+
+- 使用 `pnpm dev` 进行开发，`pnpm build` 进行生产构建
+- 内容脚本放在 `src/content.tsx` - 这些脚本在网页上下文中运行
+- 弹窗脚本放在 `src/popup.tsx` - 这些脚本创建扩展的弹窗界面
+- 主机权限在 package.json 的 manifest 部分配置
+- 图标等资源文件放在 `assets/` 目录
+
+## 开发命令
+
+- `pnpm dev` - 启动开发服务器并支持热重载
+- `pnpm build` - 生产环境构建
+- `pnpm package` - 打包扩展用于分发
+
+修改此扩展时，始终考虑 Plasmo 框架模式，确保内容/弹窗脚本结构正确。

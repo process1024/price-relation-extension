@@ -1,8 +1,8 @@
 {
-  "name": "price-relation-extension",
-  "displayName": "Price relation extension",
+  "name": "image-search-extension",
+  "displayName": "Image Search Extension",
   "version": "0.0.1",
-  "description": "比价插件",
+  "description": "以图搜同款浏览器扩展",
   "author": "chen junyi",
   "scripts": {
     "dev": "plasmo dev",
@@ -10,6 +10,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/storage": "^1.15.0",
     "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
