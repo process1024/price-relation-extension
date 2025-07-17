@@ -41,4 +41,7 @@ pnpm build
 
 # 打包扩展
 pnpm package
+
+# 本地预览官网（docs/index.html）
+pnpm doc
 ```
