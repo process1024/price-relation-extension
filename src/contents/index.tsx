@@ -53,7 +53,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ imageUrl, getTargetRect, on
   }, [getTargetRect])
 
   const handleSearch = (): void => {
-    const searchUrl = `https://images.google.com/searchbyimage?image_url=${encodeURIComponent(imageUrl)}`
+    const searchUrl = `https://tenant.boyxch.com/search?image_url=${encodeURIComponent(imageUrl)}`
     window.open(searchUrl, '_blank', 'noopener,noreferrer')
     onClose()
   }
