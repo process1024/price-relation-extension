@@ -118,7 +118,7 @@ function IndexPopup() {
           )}
           <div style={{ margin: '18px 0 0 0', textAlign: 'center' }}>
             <a
-              href="https://tenant.boyxch.com/"
+              href="https://houzi1088.com/"
               target="_blank"
               style={{
                 color: '#1890ff',
@@ -133,7 +133,7 @@ function IndexPopup() {
                 boxShadow: '0 1px 4px rgba(24,144,255,0.06)'
               }}
             >
-              官网
+              猴子搬家
             </a>
           </div>
         </div>
