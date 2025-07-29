@@ -9,7 +9,7 @@ import { When } from "react-if";
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
-  all_frames: true
+  all_frames: false
 }
 
 export const getStyle = () => {
@@ -282,6 +282,7 @@ const ImageSearchContent: React.FC = () => {
 
   return null
 }
+console.log('content.js');
 
 const initImageSearch = (): void => {
   if (document.getElementById('image-search-extension-root')) return
@@ -289,6 +290,7 @@ const initImageSearch = (): void => {
   container.id = 'image-search-extension-root'
   document.body.appendChild(container)
   const root = createRoot(container)
+  console.log('initImageSearch');
   root.render(<ImageSearchContent />)
 }
 
@@ -307,6 +309,9 @@ export default function PlasmoOverlay() {
         setContentUiType('capture');
         console.log('START_SCREENSHOT');
       },
+      START_UPLOAD_IMAGE: function () {
+        handleUploadImage();
+      },
     };
 
     const messageListener = (request) => {
@@ -317,10 +322,46 @@ export default function PlasmoOverlay() {
     chrome.runtime.onMessage.addListener(messageListener);
   }, []);
 
+  // 处理上传图片
+  const handleUploadImage = () => {
+    // 创建隐藏的文件输入框
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      
+      // 转换为base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        if (base64) {
+          // 跳转到搜索页面，传入image_data参数
+          const searchUrl = `${DOMAIN}/#/all/gift?image_data=${encodeURIComponent(base64)}`;
+          window.open(searchUrl, '_blank', 'noopener,noreferrer');
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+    
+    // 触发文件选择
+    document.body.appendChild(input);
+    input.click();
+    
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(input);
+    }, 100);
+  };
+
   const onComplete = (result: string) => {
-    const searchUrl = `${DOMAIN}/#/all/gift?image_data=${encodeURIComponent(result)}`
-    window.open(searchUrl, '_blank', 'noopener,noreferrer')
-  }
+    // 跳转到搜索页面，传入image_data参数
+    const searchUrl = `${DOMAIN}/#/all/gift?image_data=${encodeURIComponent(result)}`;
+    window.open(searchUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <When condition={contentUiType === 'capture'}>

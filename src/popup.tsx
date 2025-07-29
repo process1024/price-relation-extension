@@ -76,6 +76,17 @@ function IndexPopup() {
     })
   }
 
+  // 上传图片按钮点击
+  const handleUploadImage = async () => {
+    // 发送上传图片指令到当前tab
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'START_UPLOAD_IMAGE' })
+        window.close() // 关闭popup
+      }
+    })
+  }
+
   const handleSearch = async () => {
     chrome.tabs.create({ url: `${DOMAIN}/#/all/gift` })
   }
@@ -150,6 +161,7 @@ function IndexPopup() {
               tabIndex={0}
               onMouseOver={e => (e.currentTarget.style.background = '#ededed')}
               onMouseOut={e => (e.currentTarget.style.background = '#f5f5f7')}
+              onClick={handleUploadImage}
             >
               <span style={{ fontSize: 28, marginBottom: 10, color: '#222' }}>➕</span>
               <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>上传图片找同款</span>
