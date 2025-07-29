@@ -1,0 +1,64 @@
+#mask {
+  z-index: 20000 !important;
+  width: 100vw;
+  // background-color: rgba(0, 0, 0, 0.3);
+  position: relative;
+  // position: fixed;
+  cursor: crosshair;
+}
+
+.capture-annotate {
+  display: flex;
+  height: 40px;
+  // gap: 10px;
+
+  .btn {
+    border: none;
+    min-width: 50px;
+    height: 34px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 12px !important;
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+    // font-size: 12px !important;
+    // margin-right: 12px;
+    // &:hover,
+    // &:focus {
+    //   color: var(--main-color);
+    //   border-color: var(--main-color);
+    // }
+    &.cancel {
+      background-color: #ff5a5a;
+    }
+    &.secondary {
+      background-color: #0db7d1;
+    }
+    &.primary {
+      // #4f6ff4
+      background-color: var(--main-color);
+    }
+  }
+}
+
+.capture-mask {
+  .crop-tip {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 8px;
+    padding: 4px 8px;
+    color: #fff;
+    font-size: 14px;
+    margin: 6px 0 0 6px;
+  }
+
+  .capture-element-inspector {
+    background: var(--main-color);
+    opacity: 0.2;
+    // background: rgba(255, 89, 103, 0.2);
+    border: 1px dashed var(--main-color);
+    position: absolute;
+    transition: all 75ms ease-in-out 0s;
+  }
+}

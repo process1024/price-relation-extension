@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Storage } from "@plasmohq/storage"
+import { DOMAIN } from "./constant/domain"
 
 function getDomain(url: string) {
   try {
@@ -64,29 +65,122 @@ function IndexPopup() {
     await storage.set(key, newVal)
   }
 
+  // 截图按钮点击
+  const handleScreenshot = async () => {
+    // 发送截图指令到当前tab
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'START_SCREENSHOT' })
+        window.close() // 关闭popup
+      }
+    })
+  }
+
+  const handleSearch = async () => {
+    chrome.tabs.create({ url: `${DOMAIN}/#/all/gift` })
+  }
+
   return (
     <div id="popup-root">
       <div style={{
         padding: 0,
-        minWidth: 270,
-        background: '#fff',
-        // borderRadius: 14, // 去掉圆角
-        boxShadow: '0 4px 18px rgba(24,144,255,0.10)',
+        minWidth: 320,
+        background: '#fafbfc',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
         fontFamily: 'Segoe UI, PingFang SC, Arial, sans-serif',
         color: '#222',
-        maxWidth: 350,
-        border: '1.5px solid #e6f7ff',
+        maxWidth: 400,
+        border: '1px solid #ececec',
         overflow: 'hidden'
       }}>
         <div style={{
-          padding: '14px 0 8px 0',
+          background: '#fff',
+          padding: '16px 0 8px 0',
           textAlign: 'center',
-          // borderTopLeftRadius: 14,
-          // borderTopRightRadius: 14
+          color: '#222',
+          borderBottom: '1px solid #f0f0f0',
         }}>
           <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1 }}>以图搜同款</div>
         </div>
-        <div style={{ padding: '18px 20px 10px 20px' }}>
+        <div style={{ padding: '22px 18px 10px 18px' }}>
+          {/* 三大功能入口 - 横向卡片风格 */}
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 16, justifyContent: 'center', marginBottom: 22 }}>
+            {/* 一键截图找同款 */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 90,
+                maxWidth: 120,
+                background: '#f5f5f7',
+                borderRadius: 12,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '22px 0 16px 0',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.18s, background 0.18s',
+                border: '1px solid #ececec',
+                userSelect: 'none',
+                textAlign: 'center',
+              }}
+              tabIndex={0}
+              onMouseOver={e => (e.currentTarget.style.background = '#ededed')}
+              onMouseOut={e => (e.currentTarget.style.background = '#f5f5f7')}
+              onClick={handleScreenshot}
+            >
+              <span style={{ fontSize: 28, marginBottom: 10, color: '#222' }}>🖼️</span>
+              <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>一键截图找同款</span>
+            </div>
+            {/* 上传图片找同款 */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 90,
+                maxWidth: 120,
+                background: '#f5f5f7',
+                borderRadius: 12,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '22px 0 16px 0',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.18s, background 0.18s',
+                border: '1px solid #ececec',
+                userSelect: 'none',
+                textAlign: 'center',
+              }}
+              tabIndex={0}
+              onMouseOver={e => (e.currentTarget.style.background = '#ededed')}
+              onMouseOut={e => (e.currentTarget.style.background = '#f5f5f7')}
+            >
+              <span style={{ fontSize: 28, marginBottom: 10, color: '#222' }}>➕</span>
+              <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>上传图片找同款</span>
+            </div>
+            {/* 关键词搜索 */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 90,
+                maxWidth: 120,
+                background: '#f5f5f7',
+                borderRadius: 12,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '22px 0 16px 0',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.18s, background 0.18s',
+                border: '1px solid #ececec',
+                userSelect: 'none',
+                textAlign: 'center',
+              }}
+              tabIndex={0}
+              onMouseOver={e => (e.currentTarget.style.background = '#ededed')}
+              onMouseOut={e => (e.currentTarget.style.background = '#f5f5f7')}
+              onClick={handleSearch}
+            >
+              <span style={{ fontSize: 28, marginBottom: 10, color: '#222' }}>🔍</span>
+              <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>关键词搜索</span>
+            </div>
+          </div>
+          {/* 原有网站开关和官网链接 */}
           {!loading && domain && (
             <>
               <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 2, display: 'flex', alignItems: 'center' }}>
@@ -118,7 +212,7 @@ function IndexPopup() {
           )}
           <div style={{ margin: '18px 0 0 0', textAlign: 'center' }}>
             <a
-              href="https://houzi1088.com/"
+              href={DOMAIN}
               target="_blank"
               style={{
                 color: '#1890ff',
@@ -126,14 +220,13 @@ function IndexPopup() {
                 textDecoration: 'none',
                 fontWeight: 500,
                 border: '1px solid #e6f7ff',
-                // borderRadius: 8,
                 padding: '7px 22px',
                 background: '#f7f9fb',
                 display: 'inline-block',
                 boxShadow: '0 1px 4px rgba(24,144,255,0.06)'
               }}
             >
-              猴子搬家
+              官网
             </a>
           </div>
         </div>

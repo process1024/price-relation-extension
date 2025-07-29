@@ -1,12 +1,22 @@
+import styleText from 'data-text:../styles/content.less';
 import type { PlasmoCSConfig } from "plasmo"
 import { useEffect, useRef, useState } from "react"
 import { createRoot } from "react-dom/client"
-import { Storage } from "@plasmohq/storage"
+import { Storage } from "@plasmohq/storage";
+import { DOMAIN } from "../constant/domain";
+import Capture from "../components/Capture";
+import { When } from "react-if";
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
   all_frames: true
 }
+
+export const getStyle = () => {
+  const style = document.createElement('style');
+  style.textContent = styleText;
+  return style;
+};
 
 // 只支持左上角
 const getButtonXY = (rect: DOMRect) => ({
@@ -53,7 +63,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ imageUrl, getTargetRect, on
   }, [getTargetRect])
 
   const handleSearch = (): void => {
-    const searchUrl = `https://houzi1088.com/all/gift?image_url=${encodeURIComponent(imageUrl)}`
+    const searchUrl = `${DOMAIN}/#/all/gift?image_url=${encodeURIComponent(imageUrl)}`
     window.open(searchUrl, '_blank', 'noopener,noreferrer')
     onClose()
   }
@@ -289,5 +299,32 @@ if (document.readyState === 'loading') {
 }
 
 export default function PlasmoOverlay() {
-  return null
+  const [contentUiType, setContentUiType] = useState('');
+
+  useEffect(() => {
+    const listenerEventMap = {
+      START_SCREENSHOT: function () {
+        setContentUiType('capture');
+        console.log('START_SCREENSHOT');
+      },
+    };
+
+    const messageListener = (request) => {
+      console.log(request);
+      listenerEventMap[request.type] && listenerEventMap[request.type](request);
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+  }, []);
+
+  const onComplete = (result: string) => {
+    const searchUrl = `${DOMAIN}/#/all/gift?image_data=${encodeURIComponent(result)}`
+    window.open(searchUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  return (
+    <When condition={contentUiType === 'capture'}>
+      <Capture onCancel={() => setContentUiType('default')} onComplete={onComplete}/>
+    </When>
+  )
 } 
