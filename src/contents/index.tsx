@@ -340,7 +340,7 @@ export default function PlasmoOverlay() {
         const base64 = e.target?.result as string;
         if (base64) {
           // 跳转到搜索页面，传入image_data参数
-          const searchUrl = `${DOMAIN}/#/all/gift?image_data=${encodeURIComponent(base64)}`;
+          const searchUrl = `${DOMAIN}/#/all/gift?image_url=${encodeURIComponent(base64)}`;
           window.open(searchUrl, '_blank', 'noopener,noreferrer');
         }
       };
