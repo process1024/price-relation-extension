@@ -88,7 +88,7 @@ function IndexPopup() {
   }
 
   const handleSearch = async () => {
-    chrome.tabs.create({ url: `${DOMAIN}/#/all/gift` })
+    chrome.tabs.create({ url: `${DOMAIN}` })
   }
 
   return (
@@ -97,21 +97,18 @@ function IndexPopup() {
         padding: 0,
         minWidth: 320,
         background: '#fafbfc',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
         fontFamily: 'Segoe UI, PingFang SC, Arial, sans-serif',
         color: '#222',
         maxWidth: 400,
-        border: '1px solid #ececec',
         overflow: 'hidden'
       }}>
         <div style={{
           background: '#fff',
-          padding: '16px 0 8px 0',
+          padding: '8px',
           textAlign: 'center',
           color: '#222',
-          borderBottom: '1px solid #f0f0f0',
         }}>
-          <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1 }}>以图搜同款</div>
+          <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1 }}>猴子搬家助手 - 以图搜同款</div>
         </div>
         <div style={{ padding: '22px 18px 10px 18px' }}>
           {/* 三大功能入口 - 横向卡片风格 */}
