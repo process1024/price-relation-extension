@@ -129,13 +129,13 @@ const ImageSearchContent: React.FC = () => {
   const [searchButton, setSearchButton] = useState<{
     imageUrl: string
     getTargetRect: () => DOMRect | null
-    target: HTMLImageElement | null
+    target: HTMLElement | null
   } | null>(null)
   const [isHoveringButton, setIsHoveringButton] = useState(false)
   const [enabled, setEnabled] = useState(true)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const currentImageRef = useRef<HTMLImageElement | null>(null)
+  const currentImageRef = useRef<HTMLElement | null>(null)
 
   // 检查当前域名是否启用
   useEffect(() => {
@@ -163,6 +163,7 @@ const ImageSearchContent: React.FC = () => {
     return () => { if (typeof unsub === 'function') unsub() }
   }, [])
 
+  // 检查元素是否为有效的图片元素
   const isValidImage = (img: HTMLImageElement): boolean => {
     if (img.naturalWidth < 100 || img.naturalHeight < 100) return false
     const src = img.src.toLowerCase()
@@ -173,6 +174,7 @@ const ImageSearchContent: React.FC = () => {
     return !excludePatterns.some(pattern => src.includes(pattern))
   }
 
+  // 获取图片元素的URL
   const getImageUrl = (img: HTMLImageElement): string => {
     const originalUrl = img.getAttribute('data-original') || img.getAttribute('data-src') || img.src
     try {
@@ -182,17 +184,172 @@ const ImageSearchContent: React.FC = () => {
     }
   }
 
+  // 检查元素是否有CSS背景图片
+  const hasBackgroundImage = (element: HTMLElement): boolean => {
+    const style = window.getComputedStyle(element)
+    const backgroundImage = style.backgroundImage
+    return backgroundImage && backgroundImage !== 'none' && backgroundImage !== 'initial'
+  }
+
+  // 从CSS背景图片中提取URL
+  const getBackgroundImageUrl = (element: HTMLElement): string | null => {
+    const style = window.getComputedStyle(element)
+    const backgroundImage = style.backgroundImage
+    
+    if (!backgroundImage || backgroundImage === 'none' || backgroundImage === 'initial') {
+      return null
+    }
+
+    // 匹配 url() 格式的图片，支持多种格式
+    const urlMatches = backgroundImage.match(/url\(['"]?([^'"]+)['"]?\)/g)
+    if (urlMatches && urlMatches.length > 0) {
+      // 取第一个有效的图片URL（通常是最主要的图片）
+      for (const urlMatch of urlMatches) {
+        const url = urlMatch.replace(/url\(['"]?([^'"]+)['"]?\)/, '$1')
+        
+        // 跳过CSS渐变和无效URL
+        if (url.includes('gradient') || url.includes('data:')) {
+          continue
+        }
+        
+        try {
+          return new URL(url, window.location.href).href
+        } catch {
+          // 如果是相对路径，尝试直接返回
+          if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) {
+            return url
+          }
+        }
+      }
+    }
+
+    return null
+  }
+
+  // 检查背景图片是否有效（排除小图标等）
+  const isValidBackgroundImage = (element: HTMLElement): boolean => {
+    const url = getBackgroundImageUrl(element)
+    if (!url) return false
+
+    const urlLower = url.toLowerCase()
+    const excludePatterns = [
+      'icon', 'logo', 'avatar', 'button', 'arrow', 
+      'loading', 'spinner', 'placeholder', 'banner', 'gradient',
+      'sprite', 'pattern', 'texture', 'bg-', 'background-'
+    ]
+    
+    // 排除CSS渐变和数据URL
+    if (urlLower.includes('gradient') || urlLower.startsWith('data:')) return false
+    
+    // 排除明显的图标和装饰性图片
+    if (excludePatterns.some(pattern => urlLower.includes(pattern))) return false
+
+    // 检查元素尺寸，确保不是太小的装饰元素
+    const rect = element.getBoundingClientRect()
+    if (rect.width < 50 || rect.height < 50) return false
+
+    // 检查元素是否可见
+    if (rect.width === 0 || rect.height === 0) return false
+
+    // 检查元素的样式，排除一些装饰性元素
+    const style = window.getComputedStyle(element)
+    if (style.display === 'none' || style.visibility === 'hidden') return false
+
+    return true
+  }
+
+  // 检查元素是否为图片容器（包含img标签或背景图片）
+  const isImageContainer = (element: HTMLElement): boolean => {
+    // 跳过一些明显不是图片容器的元素
+    const skipTags = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'META', 'LINK', 'INPUT', 'TEXTAREA', 'SELECT']
+    if (skipTags.includes(element.tagName)) {
+      return false
+    }
+
+    // 检查是否包含img标签
+    const imgElements = element.querySelectorAll('img')
+    for (const img of imgElements) {
+      if (isValidImage(img)) return true
+    }
+    
+    // 检查是否有背景图片
+    if (hasBackgroundImage(element) && isValidBackgroundImage(element)) {
+      return true
+    }
+
+    // 检查元素本身是否有图片相关的类名或属性
+    const className = element.className?.toLowerCase() || ''
+    const classNames = ['image', 'img', 'photo', 'picture', 'banner', 'hero', 'cover']
+    if (classNames.some(name => className.includes(name))) {
+      // 进一步检查是否有背景图片
+      if (hasBackgroundImage(element) && isValidBackgroundImage(element)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  // 获取图片容器的图片URL
+  const getImageContainerUrl = (element: HTMLElement): string | null => {
+    // 优先检查img标签
+    const imgElements = element.querySelectorAll('img')
+    for (const img of imgElements) {
+      if (isValidImage(img)) {
+        return getImageUrl(img)
+      }
+    }
+    
+    // 检查背景图片
+    if (hasBackgroundImage(element) && isValidBackgroundImage(element)) {
+      return getBackgroundImageUrl(element)
+    }
+
+    return null
+  }
+
   const handleImageHover = (e: MouseEvent): void => {
-    const target = e.target as HTMLImageElement
-    if (!target || target.tagName !== 'IMG' || !isValidImage(target)) return
+    const target = e.target as HTMLElement
+    if (!target) return
+
+    let imageUrl: string | null = null
+    let targetElement: HTMLElement | null = null
+
+    // 检查是否为img标签
+    if (target.tagName === 'IMG') {
+      const img = target as HTMLImageElement
+      if (isValidImage(img)) {
+        imageUrl = getImageUrl(img)
+        targetElement = img
+      }
+    } else {
+      // 检查是否为图片容器（包含背景图片或子img标签）
+      if (isImageContainer(target)) {
+        imageUrl = getImageContainerUrl(target)
+        targetElement = target
+      }
+    }
+
+    if (!imageUrl || !targetElement) return
+
+    // 调试信息（仅在开发模式下显示）
+    if (process.env.NODE_ENV === 'development') {
+      console.log('检测到图片元素:', {
+        tagName: targetElement.tagName,
+        className: targetElement.className,
+        imageUrl,
+        rect: targetElement.getBoundingClientRect()
+      })
+    }
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current)
-    currentImageRef.current = target
+    currentImageRef.current = targetElement
     timeoutRef.current = setTimeout(() => {
       setSearchButton({
-        imageUrl: getImageUrl(target),
-        getTargetRect: () => target.getBoundingClientRect(),
-        target
+        imageUrl,
+        getTargetRect: () => targetElement!.getBoundingClientRect(),
+        target: targetElement
       })
     }, 300)
   }
@@ -232,10 +389,22 @@ const ImageSearchContent: React.FC = () => {
   useEffect(() => {
     if (!enabled) return
     const handleMouseOver = (e: MouseEvent): void => {
-      if ((e.target as HTMLElement).tagName === 'IMG') handleImageHover(e)
+      const target = e.target as HTMLElement
+      if (!target) return
+      
+      // 检查是否为img标签或包含图片的元素
+      if (target.tagName === 'IMG' || isImageContainer(target)) {
+        handleImageHover(e)
+      }
     }
     const handleMouseOut = (e: MouseEvent): void => {
-      if ((e.target as HTMLElement).tagName === 'IMG') handleImageLeave(e)
+      const target = e.target as HTMLElement
+      if (!target) return
+      
+      // 检查是否为img标签或包含图片的元素
+      if (target.tagName === 'IMG' || isImageContainer(target)) {
+        handleImageLeave(e)
+      }
     }
 
     document.addEventListener('mouseover', handleMouseOver, true)
