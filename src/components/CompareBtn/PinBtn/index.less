@@ -1,0 +1,259 @@
+@primary-color: #ff5967;
+@tooltip-bg: rgba(0, 0, 0, 0.85);
+@border-radius: 12px;
+
+// FIX: pin站全局样式影响
+:focus {
+  outline: none !important;
+}
+
+.pin-btn-wrap {
+  display: flex;
+  // align-items: center;
+  height: 42px;
+  > .pin-btn {
+    border-radius: @border-radius;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    // justify-content: center;
+    padding: 0;
+    border: none;
+    background: var(--default-color);
+    &:hover,
+    &:focus {
+      background-color: var(--default-color);
+      border-color: var(--default-color);
+    }
+    width: 52px;
+  }
+
+  .flash-pin-btn {
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    flex-shrink: 0;
+    // transform: scale(0);
+    opacity: 0;
+    transition: all 0.2s ease-in;
+
+    border-top-right-radius: @border-radius;
+    border-bottom-right-radius: @border-radius;
+    &:hover,
+    &:focus {
+      background-color: var(--focus-color);
+      border-color: var(--focus-color);
+    }
+  }
+
+  .pin-btn-text {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: @border-radius;
+    border-bottom-left-radius: @border-radius;
+    padding: 0 4px;
+    &:hover,
+    &:focus {
+      background-color: var(--focus-color);
+      border-color: var(--focus-color);
+    }
+  }
+
+  &:hover {
+    .pin-btn {
+      height: 40px !important;
+      width: 71px;
+      // opacity: 1;
+    }
+    .flash-pin-btn {
+      display: flex;
+      width: 20px;
+      opacity: 1;
+
+      // transform: scale(1);
+    }
+    .pin-btn-text {
+      width: 50px;
+      flex-shrink: 0;
+    }
+
+    .pin-btn + .pin-btn::before {
+      display: none;
+    }
+  }
+
+  .pin-btn-right {
+    font-size: 12px;
+    line-height: 30px;
+    img {
+      width: 12px;
+      margin: 0 2px;
+    }
+  }
+  .pin-btn + .pin-btn::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: -1.5px;
+    margin-top: -8px;
+    width: 1px;
+    height: 16px;
+    background-color: #fff;
+    opacity: 0.16;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .ant-tooltip-inner {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 10px 16px;
+    border-radius: 12px;
+    height: 40px;
+  }
+
+  .modal {
+    width: 280px;
+    background: #ffffff;
+    box-shadow: 0px 0px 1px rgba(28, 31, 35, 0.16), 0px 6px 32px 4px rgba(28, 31, 35, 0.08);
+    // box-shadow: @shadow-m;
+    border-radius: 24px;
+    padding: 20px;
+    cursor: default;
+
+    .content {
+      font-size: 14px;
+      line-height: 20px;
+      white-space: break-spaces;
+      text-align: left;
+
+      .bold {
+        font-weight: 600;
+        margin: 0 4px;
+      }
+
+      .board-text {
+        overflow: hidden;
+        display: inline-block;
+        flex-wrap: nowrap;
+        text-overflow: ellipsis;
+        max-width: 100px;
+        white-space: nowrap;
+        vertical-align: -5px;
+        &:hover {
+          color: #616365;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .form {
+      margin-top: 8px;
+
+      .input {
+        height: 40px;
+      }
+    }
+
+    .footer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 20px;
+
+      .cancel-btn {
+        background-color: #edf2f5;
+        color: #1e2023;
+        &:hover {
+          background-color: #e4e9ed;
+        }
+      }
+
+      .confirm-pin-btn {
+        background-color: #ff5967;
+        &:hover {
+          background: #f03a52;
+        }
+      }
+
+      .button {
+        border-radius: 12px;
+        width: 60px;
+        font-size: 14px;
+        & + .button {
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  .tooltip {
+    background: rgba(0, 0, 0, 0.85);
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.03), 0px 16px 48px 8px rgba(0, 0, 0, 0.08);
+    // box-shadow: @shadow-l;
+    border-radius: 12px;
+    padding: 8px 16px;
+    position: relative;
+    margin-top: 3px;
+
+    span {
+      line-height: 24px;
+      display: block;
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    &::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      margin-left: -5px;
+      border-bottom: 3px solid rgba(0, 0, 0, 0.85);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+  }
+}
+
+.pin-btn-wrap-small .pin-btn {
+  height: 20px;
+  // .pin-btn-text {
+  //   line-height: 12px;
+  //   padding: 0 2px;
+  // }
+}
+
+// .pin-btn-wrap-default {
+//   .pin-btn:first-child {
+//     border-top-right-radius: 0 !important;
+//     border-bottom-right-radius: 0 !important;
+//   }
+// }
+
+.pin-btn-wrap-visible {
+  .pin-btn {
+    height: 40px !important;
+    width: 71px;
+    // opacity: 1;
+  }
+  .flash-pin-btn {
+    display: flex;
+    width: 20px;
+    opacity: 1;
+
+    // transform: scale(1);
+  }
+  .pin-btn-text {
+    width: 50px;
+    flex-shrink: 0;
+  }
+}

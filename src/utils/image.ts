@@ -1,3 +1,10 @@
+import { getChildImgs } from "./element";
+
+// 判定最小可交互尺寸
+const IMAGE_LIMIT_SIZE = {
+  width: 60,
+  height: 60
+}
 
 // 获取图片的原始宽高
 export function getImgNaturalSize(el: HTMLImageElement) {
@@ -222,3 +229,118 @@ export function debugImageDimensions(
   console.log('🖥️ Viewport size:', `${window.innerWidth} × ${window.innerHeight}`);
   console.groupEnd();
 }
+
+export const getImgByVideo = (el) => {
+  if (el.tagName.toLowerCase() !== "video") {
+    return null;
+  }
+
+  // 只有设置了 crossorigin 的 video 才能渲染到画布
+  if (el.getAttribute("crossorigin")) {
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+    const { videoWidth, videoHeight } = el as HTMLVideoElement;
+    canvas.width = videoWidth;
+    canvas.height = videoHeight;
+    ctx.drawImage(el as HTMLVideoElement, 0, 0, canvas.width, canvas.height);
+    const imgEl = document.createElement("img");
+    imgEl.src = canvas.toDataURL("image/png", 1);
+    imgEl.width = videoWidth;
+    imgEl.height = videoHeight;
+    imgEl.setAttribute("huaban-custom-img", "1");
+    return imgEl;
+  }
+  // 采集有设置封面图的video
+  else if (el.getAttribute("poster")) {
+    const imgEl = document.createElement("img");
+    imgEl.src = el.getAttribute("poster");
+    imgEl.width = (el as HTMLVideoElement).videoWidth;
+    imgEl.height = (el as HTMLVideoElement).videoHeight;
+    imgEl.setAttribute("huaban-custom-img", "1");
+    return imgEl;
+  }
+};
+
+
+// 从目标元素的子元素中找到图片
+export const getImgByTargetSon = (el) => {
+  if (el.nodeName !== "A" && el.nodeName !== "DIV") {
+    return null;
+  }
+  const img = el?.getElementsByTagName("img")[0];
+
+  if (img) {
+    const inLimit = inLimitSize(img);
+
+    if (!inLimit && checkValid(img, el)) {
+      return img;
+    }
+  }
+};
+// 从目标元素的父元素中找图片
+export const getImgByTargetFather = (el) => {
+  if (!el?.parentElement || (el.nodeName !== "A" && el.nodeName !== "DIV")) {
+    return null;
+  }
+
+  const imgs = getChildImgs(el.parentElement);
+
+  if (imgs.length) {
+    const sideImg = imgs.find((imgEl) => !inLimitSize(imgEl));
+
+    if (sideImg && checkValid(sideImg, el)) return sideImg;
+  }
+};
+
+export function inLimitSize(el: HTMLElement) {
+  const size = getImgNaturalSize(el as HTMLImageElement);
+  const elemSize = getElemSize(el as HTMLImageElement);
+  if (
+    size.width < IMAGE_LIMIT_SIZE.width ||
+    size.height < IMAGE_LIMIT_SIZE.height ||
+    elemSize.width < IMAGE_LIMIT_SIZE.width ||
+    elemSize.height < IMAGE_LIMIT_SIZE.height
+  ) {
+    return true;
+  }
+  return false;
+}
+
+
+const checkValid = (imgEl, targetEl) => {
+  // 判断鼠标如果移动上去的元素和查询到的图片元素大小差距过大则不显示
+  const { width, height } = getElemSize(imgEl);
+  const { width: targetWidth, height: targetHeight } = getElemSize(targetEl);
+  if (width * 2 < targetWidth || height * 2 < targetHeight) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+
+
+export const getImgByBackground = (el) => {
+  if (getComputedStyle(el).getPropertyValue("background-image") !== "none") {
+    if (el.clientWidth < IMAGE_LIMIT_SIZE.width || el.clientHeight < IMAGE_LIMIT_SIZE.height) {
+      return null;
+    }
+    const backgroundImage = getComputedStyle(el).getPropertyValue("background-image");
+    if (!backgroundImage.startsWith("url")) {
+      return null;
+    }
+
+    const url = backgroundImage.replace(/.*url\(([^\)]+)\).*/gi, "$1").replace(/"/g, "");
+    if (isBase64(url)) {
+      return null;
+    }
+    const imgEl = document.createElement("img");
+    imgEl.src = url;
+    imgEl.width = el.clientWidth;
+    imgEl.height = el.clientHeight;
+    imgEl.setAttribute("huaban-custom-img", "1");
+    return imgEl;
+  } else {
+    return null;
+  }
+};
