@@ -19,8 +19,6 @@ export const getStyle = () => {
 
 export const getShadowHostId = () => "price-compare-shadow";
 
-console.log("content.js")
-
 export default function PlasmoOverlay() {
   const [contentUiType, setContentUiType] = useState("")
 
@@ -28,7 +26,6 @@ export default function PlasmoOverlay() {
     const listenerEventMap = {
       START_SCREENSHOT: function () {
         setContentUiType("capture")
-        console.log("START_SCREENSHOT")
       },
       START_UPLOAD_IMAGE: function () {
         handleUploadImage()

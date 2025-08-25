@@ -5,6 +5,7 @@ import {
 } from "~utils/imageDetect";
 import { getElPosition } from "~utils/element";
 import { getImageOriginUrl } from "~utils/image";
+import { DOMAIN } from "~constant/domain";
 
 const btnPositionOffset = {
   x: 0,
@@ -71,7 +72,7 @@ const PinWrap = ({ type, position: buttonPosition, mode }) => {
       setPosition(positionResult);
       setImgEle(imgElement);
     } else {
-      setVisible(false);
+      // setVisible(false);
     }
   };
 
@@ -112,7 +113,9 @@ const PinWrap = ({ type, position: buttonPosition, mode }) => {
       img_url: await getImageOriginUrl(imgEle, { isAsync: true }),
       link: window.location.href,
     };
-    console.log('pinData', pinData);
+
+    const searchUrl = `${DOMAIN}?image_url=${encodeURIComponent(pinData.img_url)}`
+    window.open(searchUrl, "_blank", "noopener,noreferrer")
   }
 
   const style = useMemo(() => {
