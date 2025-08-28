@@ -2,7 +2,7 @@
   "name": "image-search-extension",
   "displayName": "猴子搬家助手",
   "version": "0.0.1",
-  "description": "猴子搬家助手，支持一键截图、上传图片找同款",
+  "description": "猴子搬家助手，支持一键截图、上传图片找同款比价",
   "author": "chen junyi",
   "scripts": {
     "dev": "plasmo dev",
