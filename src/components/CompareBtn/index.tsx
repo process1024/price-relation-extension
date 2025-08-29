@@ -72,7 +72,7 @@ const PinWrap = ({ type, position: buttonPosition, mode }) => {
       setPosition(positionResult);
       setImgEle(imgElement);
     } else {
-      // setVisible(false);
+      setVisible(false);
     }
   };
 
